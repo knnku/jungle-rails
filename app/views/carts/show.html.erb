@@ -5,9 +5,10 @@
   </header>
 
   <% if enhanced_cart.empty? %>
-    <tr>
-      <td colspan="2">Your shopping cart is empty.</td>
-    </tr>
+    <div>
+      <p>Your shopping cart is empty!</p>
+    <%= link_to "Back to shopping", root_path, class: 'btn btn-lg btn-primary' %>
+    </div>
   <% else %>
 
   <div class="panel panel-default items">
