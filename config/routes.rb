@@ -19,6 +19,9 @@ Rails.application.routes.draw do
   end
 
   get '/about', to: 'about_us#index', as: 'about_us'
+
+  get '/signup' => 'users#new'
+  post '/users' => 'users#create'
   
 
   # The priority is based upon order of creation: first created -> highest priority.
