@@ -1,12 +1,40 @@
-<h1>Create an account</h1>
+<section class="user-auth">
+  <header class="page-header">
+    <h1>Create an Account</h1>
+  </header>
 
-<%= form_for :user, url: '/users' do |f| %>
+  <div class="row">
+    <div class="col-sm-6 col-sm-offset-1">
+      <%= form_for :user, url: '/users' do |f| %>
 
-  First name: <%= f.text_field :first_name %>
-  Last name: <%= f.text_field :last_name %>
-  Email: <%= f.text_field :email %>
-  Password: <%= f.password_field :password %>
-  Password Confirmation: <%= f.password_field :password_confirmation %>
-  <%= f.submit "Submit" %>
+        <div class="f-group">
+          <%= f.label :first_name %>
+          <%= f.text_field :first_name, class: 'f-control' %>
+        </div>
 
-<% end %>
+        <div class="f-group">
+          <%= f.label :last_name %>
+          <%= f.text_field :last_name, class: 'f-control' %>
+        </div>
+
+        <div class="f-group">
+          <%= f.label :email %>
+          <%= f.text_field :email, class: 'f-control' %>
+        </div>
+        
+        <div class="f-group">
+          <%= f.label :password %>
+          <%= f.text_field :password, class: 'f-control' %>
+        </div>
+
+        <div class="f-group">
+          <%= f.label :password_confirmation %>
+          <%= f.text_field :password_confirmation, class: 'f-control' %>
+        </div>
+
+        <%= f.submit 'Create', class: 'btn btn-primary' %>
+      <% end %>
+    </div>
+  </div>
+
+</section>
