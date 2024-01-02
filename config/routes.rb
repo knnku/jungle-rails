@@ -20,8 +20,15 @@ Rails.application.routes.draw do
 
   get '/about', to: 'about_us#index', as: 'about_us'
 
-  get '/signup' => 'users#new'
-  post '/users' => 'users#create'
+  # get '/signup' => 'users#new'
+  # post '/users' => 'users#create'
+
+  resources :users, only: [:new, :create]
+  get '/signup', to: 'users#new', as: 'signup'
+
+  get '/login' => 'sessions#new'
+  post '/login' => 'sessions#create'
+  get '/logout' => 'sessions#destroy'
   
 
   # The priority is based upon order of creation: first created -> highest priority.
