@@ -1,4 +1,4 @@
-<section class="user-auth">
+<section class="user-signup">
   <header class="page-header">
     <h1>Create an Account</h1>
   </header>
@@ -24,12 +24,12 @@
         
         <div class="f-group">
           <%= f.label :password %>
-          <%= f.text_field :password, class: 'f-control' %>
+          <%= f.password_field :password, class: 'f-control' %>
         </div>
 
         <div class="f-group">
-          <%= f.label :password_confirmation %>
-          <%= f.text_field :password_confirmation, class: 'f-control' %>
+          <%= f.label "Confirm Password" %>
+          <%= f.password_field :password_confirmation, class: 'f-control' %>
         </div>
 
         <%= f.submit 'Create', class: 'btn btn-primary' %>

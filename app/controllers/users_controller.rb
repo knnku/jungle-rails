@@ -7,9 +7,11 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     if @user.save
       session[:user_id] = @user.id
+      flash[:notice] = 'Signed up & logged in successfully.'
       redirect_to root_path
     else
-      redirect_to '/signup'
+      flash[:notice] = 'Something went wrong.'
+      redirect_to signup_path
     end
   end
 
@@ -24,4 +26,5 @@ class UsersController < ApplicationController
       :password_confirmation
       )
   end
+  
 end
