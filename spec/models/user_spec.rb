@@ -2,42 +2,90 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   describe 'validations' do
+    it 'requires a password' do
+      user = User.new(email: 'test@example.com', first_name: 'John', last_name: 'Doe', password: nil,
+                      password_confirmation: 'password')
+      expect(user.valid?).to be_falsey
+      expect(user.errors.full_messages).to include("Password can't be blank")
+    end
 
-    describe 'creates a new user' do
-      it 'validates the successfull creation of a new user' do
-        fake_user = User.new(
-          first_name: 'John',
-          last_name: 'Doe',
-          email: 'john_doe@person.com',
-          password: 'qwerty',
-          password_confirmation: 'qwerty'
-        )
+    it 'requires a password confirmation' do
+      user = User.new(email: 'test@example.com', first_name: 'John', last_name: 'Doe', password: 'password',
+                      password_confirmation: nil)
+      expect(user.valid?).to be_falsey
+      expect(user.errors.full_messages).to include("Password confirmation can't be blank")
+    end
 
-        fake_user.save!
-        expect(fake_user.valid?).to be_truthy
+    it 'requires matching password and password_confirmation' do
+      user = User.new(
+        email: 'test@example.com',
+        first_name: 'John',
+        last_name: 'Doe',
+        password: 'password',
+        password_confirmation: 'different_password'
+      )
+      expect(user.valid?).to be_falsey
+      expect(user.errors[:password_confirmation]).to include("doesn't match Password")
+    end
+
+    it 'requires email, first name, and last name' do
+      user = User.new
+      expect(user.valid?).to be_falsey
+      expect(user.errors[:email]).to include("can't be blank")
+      expect(user.errors[:first_name]).to include("can't be blank")
+      expect(user.errors[:last_name]).to include("can't be blank")
+    end
+
+    it 'ensures uniqueness of emails (case-insensitive)' do
+      existing_user = User.create(
+        email: 'test@example.com',
+        first_name: 'John',
+        last_name: 'Doe',
+        password: 'password',
+        password_confirmation: 'password'
+      )
+      expect(User.find_by(email: 'test@example.com')).to eq(existing_user)
+
+      user = User.new(
+        email: 'TEST@example.com',
+        first_name: 'Jane',
+        last_name: 'Doe',
+        password: 'another_password',
+        password_confirmation: 'another_password'
+      )
+      expect { user.save! }.to raise_error(ActiveRecord::RecordInvalid) do |error|
+        expect(error.record.errors[:email]).to include('has already been taken')
       end
     end
 
-    context 'with the same email' do
-      it 'validates that the email has been used' do
-        existing_user = User.new(
-          first_name: 'Doe',
-          last_name: 'John',
-          email: 'john_doe@person.com',
-          password: 'qwerty',
-          password_confirmation: 'qwerty'
-        )
+    it 'requires a password with a minimum of 6 characters' do
+      user = User.new(email: 'test@example.com', first_name: 'John', last_name: 'Doe', password: 'pass',
+                      password_confirmation: 'pass')
 
-        validation_user = User.new(
-          first_name: 'Doe',
-          last_name: 'John',
-          email: 'john_doe@person.com',
-          password: 'qwerty',
-          password_confirmation: 'qwerty'
-        )
+      expect(user.valid?).to be_falsey
+      expect(user.errors[:password]).to include('is too short (minimum is 6 characters)')
+    end
+  end
 
-        puts User.count 
-        expect(validation_user.valid?).to be_falsey
+  describe '.authenticate_with_credentials' do
+    let(:test_email) { 'test@test.com' }
+    let(:test_password) { 'qwerty' }
+
+    before do
+      # Test user
+      @user = User.create(
+        email: test_email,
+        first_name: 'John',
+        last_name: 'Doe',
+        password: test_password,
+        password_confirmation: test_password
+      )
+    end
+
+    context 'with valid credentials' do
+      it 'returns the user when credentials are correct' do
+        authenticated_user = User.authenticate_with_credentials(test_email, test_password)
+        expect(authenticated_user).to eq(@user)
       end
     end
 
